@@ -41,26 +41,26 @@ checkboxListen.addEventListener('click', function () {
 });
 
 // Récupère datas enregistrées
-chrome.storage.sync.get(domainKey, function (data) {
+chrome.storage.sync.get({ domainKey : '' }, function (data) {
     if (data) {
         inputTextDomain.value = data.domainKey;
     }
 });
 
-chrome.storage.sync.get(onOffKey, function (data) {
+chrome.storage.sync.get({ onOffKey : false }, function (data) {
     if (data) {
         checkboxOnOff.checked = data.onOffKey ? 'checked' : '';
         disableInputs(data.onOffKey);
     }
 });
 
-chrome.storage.sync.get(autoPlayKey, function (data) {
+chrome.storage.sync.get({ autoPlayKey : false }, function (data) {
     if (data) {
         checkboxAutoPlay.checked = data.autoPlayKey ? 'checked' : '';
     }
 });
 
-chrome.storage.sync.get(listenKey, function (data) {
+chrome.storage.sync.get({ listenKey : false }, function (data) {
     if (data) {
         checkboxListen.checked = data.listenKey ? 'checked' : '';
     }
