@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>InvidiousifyTube</title>
+</head>
+<body>
+
+<div class="container">
+    <div class="row mt10 mb10">
+        <div class="column mr10"><img src="images/icons/icon-128.png" width="32" height="32" alt="logo"/></div>
+        <div class="column"><h1>InvidiousifyTube</h1></div>
+    </div>
+</div>
+
+<div class="container">
+    <ol class="switches mr15">
+        <li>
+            <input type="checkbox" id="onOffKey">
+            <label for="onOffKey">
+                <span class="bold">Active</span>
+                <span class="toggle"></span>
+            </label>
+        </li>
+    </ol>
+
+    <div class="sub-container" id="options-container">
+        <ol class="switches">
+            <li>
+                <input type="checkbox" id="autoPlayKey">
+                <label for="autoPlayKey">
+                    <span>Autoplay</span>
+                    <span class="toggle"></span>
+                </label>
+            </li>
+            <li>
+                <input type="checkbox" id="listenKey">
+                <label for="listenKey">
+                    <span>Audio only</span>
+                    <span class="toggle"></span>
+                </label>
+            </li>
+            <li>
+                <label class="align-left" for="domainKey">Custom domain<a href="https://docs.invidious.io/instances/" target="_blank" class="small-text">(list available here)</a></label>
+                <div class="row ml10">
+                    <span class="mr2">https://</span>
+                    <input type="text" id="domainKey" placeholder="yewtu.be">
+                    <span class="m2">/</span>
+                </div>
+            </li>
+        </ol>
+    </div>
+
+    <div class="row mt15">
+        <span class="small-text mauto">Refresh the page to apply your changes</span>
+    </div>
+
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>
