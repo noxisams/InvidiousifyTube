@@ -3,7 +3,7 @@ const dataStorage = {
     onOffKey: false,
     autoPlayKey: false,
     listenKey: false
-}
+};
 const iframeInvidious = 'iframeInvidious';
 const domainDefaultValue = 'yewtu.be';
 let videoYTurl = window.location.href;
