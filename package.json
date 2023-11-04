@@ -1,10 +1,10 @@
 {
   "name": "invidiousifytube",
   "version": "1.0.0",
-  "description": "test description",
+  "description": "Transform your YouTube with our free, no-ads Adblock extension, including an audio-only mode !",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo 'No test specified'",
     "gulp": "gulp"
   },
   "repository": {
