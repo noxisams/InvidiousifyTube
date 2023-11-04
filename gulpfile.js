@@ -36,9 +36,9 @@ gulp.task('minify-js', () => {
 
 // Tâche pour compresser tous les fichiers minifiés dans un fichier ZIP
 gulp.task('zip', () => {
-    const packageVersion = require('./package.json').version;
+    const manifestVersion = require('./' + folderApp + 'manifest.json').version;
     return gulp.src(folderBuild + folderApp + '**/*')
-        .pipe(zip('app_v' + packageVersion +'.zip'))
+        .pipe(zip('app_v' + manifestVersion +'.zip'))
         .pipe(gulp.dest(folderBuild));
 });
 

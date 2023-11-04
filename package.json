@@ -1,6 +1,5 @@
 {
   "name": "invidiousifytube",
-  "version": "1.0.0",
   "description": "Transform your YouTube with our free, no-ads Adblock extension, including an audio-only mode !",
   "main": "gulpfile.js",
   "scripts": {
