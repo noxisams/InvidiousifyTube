@@ -1,2 +1,6 @@
 # IDEs and editors
 .idea/
+
+# Dependencies
+/node_modules
+/dist

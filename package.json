@@ -1,0 +1,31 @@
+{
+  "name": "invidiousifytube",
+  "version": "1.0.0",
+  "description": "test description",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gulp": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noxisams/InvidiousifyTube.git"
+  },
+  "keywords": [
+    "youtube",
+    "adblock"
+  ],
+  "author": "noxisams",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/noxisams/InvidiousifyTube/issues"
+  },
+  "homepage": "https://github.com/noxisams/InvidiousifyTube#readme",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-terser": "^2.1.0",
+    "gulp-zip": "^5.1.0"
+  }
+}
