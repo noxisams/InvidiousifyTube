@@ -81,15 +81,15 @@ function createIframe() {
 
     const video = `${paramsUrl.get('v')}`;
     const time = paramsUrl.get('t') ? `&t=${paramsUrl.get('t')}` : '';
-    const autoplay = dataStorage.autoPlayKey;
+    const autoplay = `&autoplay=${dataStorage.autoPlayKey}`;
     const listen = dataStorage.listenKey ? '&listen=true' : '';
 
     const iframe = document.createElement('iframe');
     iframe.id = iframeInvidious;
     iframe.width = '100%';
     iframe.height = `600`;
-    iframe.src = `https://${dataStorage.domainKey}/embed/${video}?${time}${listen}`;
-    if (autoplay) {
+    iframe.src = `https://${dataStorage.domainKey}/embed/${video}?${time}${listen}${autoplay}`;
+    if (dataStorage.autoPlayKey) {
         iframe.setAttribute('allow', 'autoplay');
     }
     iframe.setAttribute('allowfullscreen', 'true');
