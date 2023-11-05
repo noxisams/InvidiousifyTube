@@ -6,59 +6,51 @@ const dataStorage = {
 };
 const iframeInvidious = 'iframeInvidious';
 const domainDefaultValue = 'yewtu.be';
-let videoYTurl = window.location.href;
 
 
+launch();
 
-initDatasStorage();
 
-setInterval(function () {
+async function launch() {
+    await loadDataStorage();
+    initListeners();
+    executeTasks();
+}
+
+function executeTasks() {
+    let count = 100;
+    removeIframeInvidious();
     if (dataStorage.onOffKey && isOnWatchPage()) {
-        if (videoYTisPlaying()) {
-            simulateClickPauseYT();
-        }
-        if (videoYTmobileIsPlaying()) {
-            simulateClickPauseYTmobile();
-        }
+        const interval = setInterval(function () {
+            if (videoYTisPlaying()) {
+                simulateClickPauseYT();
+            }
+            if (prerequisitesBeforeReplacement()) {
+                replaceFrame();
+            }
+            count--;
+            if (count < 0) {
+                clearInterval(interval);
+            }
+        }, 50);
     }
-}, 50);
+}
 
-setInterval(function () {
-    if (dataStorage.onOffKey && isOnWatchPage() && needForWork()) {
-        main();
-    }
-}, 50);
-
-setInterval(function () {
-    if (dataStorage.onOffKey && videoYThasChange()) {
-        removeIframeInvidious();
-    }
-}, 50);
-
-
-
-function needForWork() {
-    // doit être sur une page contenant une vidéo
-    const isOnWatchPageBool = isOnWatchPage();
+// Vérifie certaines conditions avant de remplacer la vidéo
+function prerequisitesBeforeReplacement() {
     // doit avoir un container video youtube dans le DOM
     const hasPlayerContainer = document.getElementById('player');
     // ne doit pas déjà contenir une iframe invidious
     const hasIframeInvidious = document.getElementById(iframeInvidious);
-    return isOnWatchPageBool && hasPlayerContainer && !hasIframeInvidious;
+    return hasPlayerContainer && !hasIframeInvidious;
 }
 
+// Vérifie si l'utilisateur est sur une page de vidéo Youtube
 function isOnWatchPage() {
     return window.location.href.includes('/watch?');
 }
 
-function videoYThasChange() {
-    let videoYTurlHasChange = videoYTurl !== window.location.href;
-    if (videoYTurlHasChange) {
-        videoYTurl = window.location.href;
-    }
-    return videoYTurlHasChange;
-}
-
+// Supprime l'iframe Invidious
 function removeIframeInvidious() {
     const iframe = document.getElementById(iframeInvidious);
     if (iframe) {
@@ -66,6 +58,7 @@ function removeIframeInvidious() {
     }
 }
 
+// Cache tous les éléments contenu dans le container Youtube
 function hideChildsPlayerContainer() {
     const playerContainer = document.getElementById('player');
     const children = playerContainer.children;
@@ -76,19 +69,16 @@ function hideChildsPlayerContainer() {
     }
 }
 
-function main() {
-    // cache tous les éléments contenu dans le containerPlayer
+// Remplace la vidéo Youtube par la vidéo Invidious
+function replaceFrame() {
     hideChildsPlayerContainer();
-
     const iframe = createIframe();
-
-    // Ajoute l'iframe à l'élément 'player'
     document
         .getElementById('player')
         .appendChild(iframe);
 }
 
-// Crée un élément iframe
+// Crée une balise iframe Invidious
 function createIframe() {
     const url = new URL(window.location);
     const paramsUrl = new URLSearchParams(url.search);
@@ -120,21 +110,13 @@ function simulateClickPauseYT() {
     }
 }
 
-function simulateClickPauseYTmobile() {
-    const button = document.querySelector('button.icon-button.player-control-play-pause-icon');
-    if (button) {
-        button.click();
-    }
-}
-
-// Simule un click sur le bouton du lecteur de vidéo Invidious
-function simulateClickPlayInvidious() {
-    const iframe = document.getElementById(iframeInvidious);
-    const button = iframe.contentWindow.document.querySelector('button.vjs-big-play-button');
-    if (button) {
-        button.click();
-    }
-}
+// Simule un click sur le bouton du lecteur de vidéo Youtube mobile
+// function simulateClickPauseYTmobile() {
+//     const button = document.querySelector('button.icon-button.player-control-play-pause-icon');
+//     if (button) {
+//         button.click();
+//     }
+// }
 
 // Vérifie si une vidéo Youtube est en cours de lecture
 function videoYTisPlaying() {
@@ -146,44 +128,46 @@ function videoYTisPlaying() {
     return false;
 }
 
-function videoYTmobileIsPlaying() {
-    const unmuteButton = document.querySelector('button.ytp-unmute.ytp-popup.ytp-button.ytp-unmute-animated.ytp-unmute-shrink');
-    if (unmuteButton && unmuteButton.style.display !== 'none') {
-        unmuteButton.click();
-    }
+// Vérifie si une vidéo Youtube mobile est en cours de lecture
+// function videoYTmobileIsPlaying() {
+//     const unmuteButton = document.querySelector('button.ytp-unmute.ytp-popup.ytp-button.ytp-unmute-animated.ytp-unmute-shrink');
+//     if (unmuteButton && unmuteButton.style.display !== 'none') {
+//         unmuteButton.click();
+//     }
+//
+//     const button = document.querySelector('button.icon-button.player-control-play-pause-icon');
+//     if (button) {
+//         const attribut = button.getAttribute('aria-pressed');
+//         return attribut === 'true';
+//     }
+//     return false;
+// }
 
-    const button = document.querySelector('button.icon-button.player-control-play-pause-icon');
-    if (button) {
-        const attribut = button.getAttribute('aria-pressed');
-        return attribut === 'true';
-    }
-    return false;
-}
-
-// Vérifie si une vidéo Invidious est en cours de lecture
-function videoInvidiousIsPlaying() {
-    const button = document.querySelector('button.vjs-big-play-button');
-    if (button) {
-        const attribut = button.getAttribute('title');
-        return attribut === 'Pause';
-    }
-    return false;
-}
-
-function initDatasStorage() {
-    chrome.storage.sync.get().then((datas) => {
-        for (let [key, value] of Object.entries(datas)) {
-            if (key === 'domainKey') {
-                dataStorage[key] = value === '' ? domainDefaultValue : value;
-                continue;
-            }
-            dataStorage[key] = value;
+// Charge les données depuis le storage de Chrome
+async function loadDataStorage() {
+    const datas = await chrome.storage.sync.get();
+    for (let [key, value] of Object.entries(datas)) {
+        if (key === 'domainKey') {
+            dataStorage[key] = value === '' ? domainDefaultValue : value;
+            continue;
         }
-    });
+        dataStorage[key] = value;
+    }
+}
 
+// Initialise les listeners (changements de params et réception message du service-worker)
+function initListeners() {
     chrome.storage.onChanged.addListener((changes, namespace) => {
-        for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+        for (let [key, {oldValue, newValue}] of Object.entries(changes)) {
             dataStorage[key] = newValue;
         }
     });
+
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+        if (request.content === 'urlHasChanged') {
+            executeTasks();
+            sendResponse({content: "response message"});
+            return true;
+        }
+    })
 }

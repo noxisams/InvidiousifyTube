@@ -19,12 +19,15 @@
       "default_title": "InvidiousifyTube",
       "default_popup": "popup.html"
    },
+   "background": {
+      "service_worker": "service-worker.js"
+   },
    "content_scripts": [
       {
          "js": [ "content-script.js" ],
-         "matches": [ "https://*.youtube.com/*" ]
+         "matches": [ "https://www.youtube.com/*" ]
       }
    ],
-   "permissions": [ "storage", "scripting" ],
+   "permissions": [ "storage", "scripting", "tabs" ],
    "update_url": "https://clients2.google.com/service/update2/crx"
 }
