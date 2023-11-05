@@ -20,7 +20,7 @@
         <li>
             <input type="checkbox" id="onOffKey">
             <label for="onOffKey">
-                <span class="bold">Active</span>
+                <span class="main-option">Active</span>
                 <span class="toggle"></span>
             </label>
         </li>
@@ -43,11 +43,16 @@
                 </label>
             </li>
             <li>
-                <label class="align-left" for="domainKey">Custom domain<a href="https://docs.invidious.io/instances/" target="_blank" class="small-text">(list available here)</a></label>
+                <label class="align-left" for="domainListKey">Custom domain</label>
                 <div class="row ml10">
-                    <span class="mr2">https://</span>
-                    <input type="text" id="domainKey" placeholder="yewtu.be">
-                    <span class="m2">/</span>
+                    <span>https://</span>
+                    <span class="custom-dropdown">
+                        <select id="domainListKey">
+                            <option value="">Choose your domain</option>
+                        </select>
+                    </span>
+                    <input type="hidden" id="domainKey">
+                    <span>/</span>
                 </div>
             </li>
         </ol>

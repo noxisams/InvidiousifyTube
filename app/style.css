@@ -13,7 +13,7 @@ body {
   border: 2px solid var(--blue);
   line-height: 1.5;
   font-weight: 400;
-  font-size: 1em;
+  font-size: 0.9em;
 }
 
 .container {
@@ -35,6 +35,11 @@ h1 {
   font-size: 1.6em;
   line-height: 1.2;
   margin: 0;
+}
+
+.main-option {
+  font-size: 1.2em;
+  font-weight: bold;
 }
 
 a {
@@ -75,10 +80,6 @@ input[type="text"] {
 
 
 /* ------------------------------ */
-
-.bold {
-  font-weight: bold;
-}
 
 .mauto {
   margin: auto;
@@ -225,11 +226,12 @@ label {
 
 .switches span.toggle::before {
   left: 1px;
-  top: 1px;
+  top: 0;
   width: 24px;
   height: 24px;
   background: var(--white);
   border-radius: 50%;
+  border: 1px solid #00000033;
   z-index: 1;
   transition: transform 0.3s;
 }
@@ -258,4 +260,24 @@ label {
   left: 8px;
   background-image: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/162656/checkmark-switcher.svg);
   background-size: 14px 14px;
+}
+
+
+/* ------------------------------ */
+
+
+.custom-dropdown {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+}
+
+.custom-dropdown select {
+  width: 160px;
+  color: var(--gray);
+  font: inherit;
+  border: 0;
+  margin: 0;
+  border-radius: 3px;
 }

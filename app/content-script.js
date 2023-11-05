@@ -1,6 +1,6 @@
 const dataStorage = {
     domainKey: 'yewtu.be',
-    onOffKey: false,
+    onOffKey: true,
     autoPlayKey: false,
     listenKey: false
 };
