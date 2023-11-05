@@ -18,6 +18,9 @@ function executeTasks() {
     removeIframeInvidious();
     if (dataStorage.onOffKey && isOnWatchPage()) {
         const interval = setInterval(function () {
+            if (videoYTisOnCinemaMode()) {
+                simulateClickCinemaModeYT();
+            }
             if (videoYTisPlaying()) {
                 simulateClickPauseYT();
             }
@@ -98,7 +101,22 @@ function createIframe() {
     return iframe;
 }
 
-// Simule un click sur le bouton du lecteur de vidéo Youtube
+// Vérifie si une vidéo Youtube est en 'Cinema mode'
+function videoYTisOnCinemaMode() {
+    // const defaultContainer = document.querySelector('#player #player-container');
+    const cinemaContainer = document.querySelector('#full-bleed-container #player-container');
+    return !!cinemaContainer;
+}
+
+// Simule un click sur le bouton 'Cinema mode' du lecteur Youtube
+function simulateClickCinemaModeYT() {
+    const button = document.querySelector('button.ytp-size-button.ytp-button');
+    if (button) {
+        button.click();
+    }
+}
+
+// Simule un click sur le bouton 'Pause' du lecteur de vidéo Youtube
 function simulateClickPauseYT() {
     const button = document.querySelector('button.ytp-play-button');
     if (button) {
