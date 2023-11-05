@@ -7,15 +7,11 @@ const dataStorage = {
 const iframeInvidious = 'iframeInvidious';
 const domainDefaultValue = 'yewtu.be';
 
-
-launch();
-
-
-async function launch() {
+(async function () {
     await loadDataStorage();
     initListeners();
     executeTasks();
-}
+})();
 
 function executeTasks() {
     let count = 100;
