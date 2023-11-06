@@ -33,7 +33,7 @@ const checkboxListen = document.getElementById(listenKey);
     });
 
     chrome.storage.local.get({ domainListKey: [] }, function (data) {
-        if (data.domainListKey.length === 0 || isDateOlderThanAWeek(data.domainListKey[0].updatedAt)) {
+        if (data.domainListKey.length === 0 || dateHasExpired(data.domainListKey[0].updatedAt)) {
             fetchInvidiousDomains().then(result => {
                 chrome.storage.local.set({domainListKey: result});
                 injectDataInHTMLSelect(result);
@@ -100,25 +100,27 @@ function fetchInvidiousDomains() {
         .then(result => {
             const now = Date.now();
             return result
-                .filter((e) => e[1].type === 'https')
                 .map((e) => {
                     return {
                         'domain': e[0],
                         'metadata': e[1],
+                        'health': +(!!e[1].monitor ? e[1].monitor.dailyRatios[0].ratio : 90),
                         'updatedAt': now
                     };
-                });
+                })
+                .filter((e) => e.metadata.type === 'https' && e.health > 0)
+                .sort((a, b) => b.health - a.health);
         })
         .catch(error => {
             console.error('Error :', error);
         });
 }
 
-// Vérifie si la date en paramètre date de plus de 24 heures
-function isDateOlderThanAWeek(date) {
+// Vérifie si la date est dépassée
+function dateHasExpired(date) {
     const differenceInMilliseconds = new Date() - new Date(date);
     const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60);
-    return differenceInDays > 24;
+    return differenceInDays > 6;
 }
 
 // Injecte les données dans l'input select
@@ -126,7 +128,7 @@ function injectDataInHTMLSelect(datas) {
     datas?.forEach(item => {
         const option = document.createElement('option');
         option.value = item.domain;
-        option.textContent = `${item.metadata.flag} ${item.domain}`;
+        option.textContent = `${item.metadata.flag} ${item.domain} - ${Math.round(item.health * 10) / 10}%`;
         option.selected = item.domain === inputTextDomain.value;
         selectDomainList.appendChild(option);
     });
