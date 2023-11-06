@@ -19,6 +19,14 @@
       "default_title": "InvidiousifyTube",
       "default_popup": "popup.html"
    },
+   "commands": {
+      "cinema-mode": {
+         "suggested_key": {
+            "default": "Alt+T"
+         },
+         "description": "Switch the video to cinema mode"
+      }
+   },
    "background": {
       "service_worker": "service-worker.js"
    },

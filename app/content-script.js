@@ -4,8 +4,11 @@ const dataStorage = {
     autoPlayKey: false,
     listenKey: false
 };
-const iframeInvidious = 'iframeInvidious';
+const idIframeInvidious = 'iframeInvidious';
+const idCinemaContainer = 'full-bleed-container';
+const idClassicContainer = 'player';
 const domainDefaultValue = 'yewtu.be';
+
 
 (async function () {
     await loadDataStorage();
@@ -13,17 +16,19 @@ const domainDefaultValue = 'yewtu.be';
     executeTasks();
 })();
 
+
 function executeTasks() {
-    let count = 100;
     removeIframeInvidious();
     if (dataStorage.onOffKey && isOnWatchPage()) {
-        const interval = setInterval(function () {
-            if (videoYTisOnCinemaMode()) {
-                simulateClickCinemaModeYT();
-            }
+        setInterval(function () {
             if (videoYTisPlaying()) {
                 simulateClickPauseYT();
             }
+            removeHotkeysYT();
+        }, 50);
+
+        let count = 100;
+        const interval = setInterval(function () {
             if (prerequisitesBeforeReplacement()) {
                 replaceFrame();
             }
@@ -37,11 +42,15 @@ function executeTasks() {
 
 // Vérifie certaines conditions avant de remplacer la vidéo
 function prerequisitesBeforeReplacement() {
-    // doit avoir un container video youtube dans le DOM
-    const hasPlayerContainer = document.getElementById('player');
+    // doit avoir un container classic video youtube dans le DOM
+    const hasPlayerContainer = document.getElementById(idClassicContainer);
+    // doit avoir un container cinema video youtube dans le DOM
+    const hasCinemaContainer = document.getElementById(idCinemaContainer);
+    // doit avoir une video youtube dans le DOM
+    const hasVideo = document.querySelector('video');
     // ne doit pas déjà contenir une iframe invidious
-    const hasIframeInvidious = document.getElementById(iframeInvidious);
-    return hasPlayerContainer && !hasIframeInvidious;
+    const hasIframeInvidious = document.getElementById(idIframeInvidious);
+    return hasPlayerContainer && hasCinemaContainer && hasVideo && !hasIframeInvidious;
 }
 
 // Vérifie si l'utilisateur est sur une page de vidéo Youtube
@@ -51,33 +60,44 @@ function isOnWatchPage() {
 
 // Supprime l'iframe Invidious
 function removeIframeInvidious() {
-    const iframe = document.getElementById(iframeInvidious);
+    const iframe = document.getElementById(idIframeInvidious);
     if (iframe) {
         iframe.remove();
     }
 }
 
-// Cache tous les éléments contenu dans le container Youtube
-function hideChildsPlayerContainer() {
-    const playerContainer = document.getElementById('player');
-    const children = playerContainer.children;
-    if (children) {
-        Array.from(children).forEach(function (child) {
-            child.style.display = 'none';
-        });
+// Supprime l'iframe Invidious
+function removeHotkeysYT() {
+    const element = document.querySelector('yt-hotkey-manager');
+    if (element) {
+        element.remove();
     }
+}
+
+// Cache tous les éléments contenu dans les containers vidéo Youtube
+function hideChildsPlayerContainer() {
+    const arrayPlayerContainer = [];
+    arrayPlayerContainer.push(document.getElementById(idClassicContainer));
+    arrayPlayerContainer.push(document.getElementById(idCinemaContainer));
+    arrayPlayerContainer
+        .filter((e) => e.children)
+        .forEach((e) => {
+            Array.from(e.children)
+                .filter((e) => e.id !== idIframeInvidious)
+                .forEach(function (child) {
+                    child.style.display = 'none';
+                });
+        })
 }
 
 // Remplace la vidéo Youtube par la vidéo Invidious
 function replaceFrame() {
     hideChildsPlayerContainer();
     const iframe = createIframe();
-    document
-        .getElementById('player')
-        .appendChild(iframe);
+    insertFrame(videoYTisOnCinemaMode(), iframe);
 }
 
-// Crée une balise iframe Invidious
+// Crée une iframe Invidious
 function createIframe() {
     const url = new URL(window.location);
     const paramsUrl = new URLSearchParams(url.search);
@@ -88,9 +108,7 @@ function createIframe() {
     const listen = dataStorage.listenKey ? '&listen=true' : '';
 
     const iframe = document.createElement('iframe');
-    iframe.id = iframeInvidious;
-    iframe.width = '100%';
-    iframe.height = `600`;
+    iframe.id = idIframeInvidious;
     iframe.src = `https://${dataStorage.domainKey}/embed/${video}?${time}${listen}${autoplay}`;
     if (dataStorage.autoPlayKey) {
         iframe.setAttribute('allow', 'autoplay');
@@ -101,10 +119,17 @@ function createIframe() {
     return iframe;
 }
 
+// Set les dimensions de l'iframe Invidious
+function setFrameSize(isOnCinemaMode, iframe) {
+    iframe.width = '100%';
+    iframe.height = isOnCinemaMode
+        ? '100%'
+        : (document.querySelector('video')?.style?.height || '600px');
+}
+
 // Vérifie si une vidéo Youtube est en 'Cinema mode'
 function videoYTisOnCinemaMode() {
-    // const defaultContainer = document.querySelector('#player #player-container');
-    const cinemaContainer = document.querySelector('#full-bleed-container #player-container');
+    const cinemaContainer = document.querySelector(`#${idCinemaContainer} video`);
     return !!cinemaContainer;
 }
 
@@ -118,9 +143,9 @@ function simulateClickCinemaModeYT() {
 
 // Simule un click sur le bouton 'Pause' du lecteur de vidéo Youtube
 function simulateClickPauseYT() {
-    const button = document.querySelector('button.ytp-play-button');
-    if (button) {
-        button.click();
+    const video = document.querySelector('video');
+    if (video) {
+        video.pause();
     }
 }
 
@@ -134,10 +159,9 @@ function simulateClickPauseYT() {
 
 // Vérifie si une vidéo Youtube est en cours de lecture
 function videoYTisPlaying() {
-    const button = document.querySelector('button.ytp-play-button');
-    if (button) {
-        const attribut = button.getAttribute('data-title-no-tooltip');
-        return attribut === 'Pause';
+    const video = document.querySelector('video');
+    if (video) {
+        return !video.paused;
     }
     return false;
 }
@@ -169,6 +193,23 @@ async function loadDataStorage() {
     }
 }
 
+// Switch vidéo mode
+function switchVideoMode() {
+    hideChildsPlayerContainer();
+    const iframe = document.getElementById(idIframeInvidious);
+    insertFrame(!videoYTisOnCinemaMode(), iframe);
+    simulateClickCinemaModeYT();
+}
+
+// Ajoute/déplace l'iframe dans le DOM
+function insertFrame(isOnCinemaMode, iframe) {
+    const containerPlayer = isOnCinemaMode
+        ? document.getElementById(idCinemaContainer)
+        : document.getElementById(idClassicContainer);
+    setFrameSize(isOnCinemaMode, iframe);
+    containerPlayer.appendChild(iframe);
+}
+
 // Initialise les listeners (changements de params et réception message du service-worker)
 function initListeners() {
     chrome.storage.onChanged.addListener((changes, namespace) => {
@@ -178,10 +219,17 @@ function initListeners() {
     });
 
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-        if (request.content === 'urlHasChanged') {
-            executeTasks();
-            sendResponse({content: "response message"});
-            return true;
+        if (dataStorage.onOffKey) {
+            if (request.content === 'urlHasChanged') {
+                executeTasks();
+                sendResponse({content: "response"});
+                return true;
+            }
+            if (request.content === 'cinema-mode') {
+                switchVideoMode();
+                sendResponse({content: "response"});
+                return true;
+            }
         }
     })
 }
