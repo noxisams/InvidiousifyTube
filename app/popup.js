@@ -21,7 +21,7 @@ const checkboxListen = document.getElementById(listenKey);
 
     chrome.storage.sync.get({ onOffKey: true }, function (data) {
         checkboxOnOff.checked = data.onOffKey ? 'checked' : '';
-        disableInputs(data.onOffKey);
+        disableExtension(data.onOffKey);
     });
 
     chrome.storage.sync.get({ autoPlayKey: false }, function (data) {
@@ -53,7 +53,7 @@ const checkboxListen = document.getElementById(listenKey);
     checkboxOnOff.addEventListener('click', function () {
         const value = checkboxOnOff.checked;
         chrome.storage.sync.set({ onOffKey: value }, function () {
-            disableInputs(value);
+            disableExtension(value);
         });
     });
 
@@ -75,8 +75,9 @@ const checkboxListen = document.getElementById(listenKey);
 })();
 
 
-// Rend toutes les options de paramètres "disable"
-function disableInputs(bool) {
+// Désactive l'extension
+function disableExtension(bool) {
+    // Rend toutes les options de paramètres "disable"
     if (bool) {
         optionsContainer.removeAttribute('disabled');
     } else {
@@ -86,6 +87,10 @@ function disableInputs(bool) {
     checkboxListen.disabled = bool ? '' : 'disabled';
     inputTextDomain.disabled = bool ? '' : 'disabled';
     selectDomainList.disabled = bool ? '' : 'disabled';
+
+    // Change le logo
+    const pathIcon = bool ? './images/icons/icon-32.png' : './images/icons/icon-32-off.png';
+    chrome.action.setIcon({ path: { 32: pathIcon } });
 }
 
 // Récupère tous les domaines disponible d'Invidious
