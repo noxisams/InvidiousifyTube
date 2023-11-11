@@ -87,10 +87,6 @@ function disableExtension(bool) {
     checkboxListen.disabled = bool ? '' : 'disabled';
     inputTextDomain.disabled = bool ? '' : 'disabled';
     selectDomainList.disabled = bool ? '' : 'disabled';
-
-    // Change le logo
-    const pathIcon = bool ? './images/icons/icon-32.png' : './images/icons/icon-32-off.png';
-    chrome.action.setIcon({ path: { 32: pathIcon } });
 }
 
 // Récupère tous les domaines disponible d'Invidious
